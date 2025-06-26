@@ -4,6 +4,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -54,6 +56,7 @@ public class Assets {
     public void load() {
         loadGameplayAssets();
         loadFonts();
+        loadAudio();
     }
 
     /**
@@ -106,6 +109,15 @@ public class Assets {
         largeFont.fontParameters.minFilter = Texture.TextureFilter.Linear;
         largeFont.fontParameters.magFilter = Texture.TextureFilter.Linear;
         manager.load(LARGE_FONT, BitmapFont.class, largeFont);
+    }
+
+    private void loadAudio() {
+        manager.load(BLOCK_SOUND, Sound.class);
+        manager.load(BOO_SOUND, Sound.class);
+        manager.load(CLICK_SOUND, Sound.class);
+        manager.load(CHEER_SOUND, Sound.class);
+        manager.load(HIT_SOUND, Sound.class);
+        manager.load(MUSIC, Music.class);
     }
 
     public void dispose() {

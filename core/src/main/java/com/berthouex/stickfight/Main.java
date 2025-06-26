@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.berthouex.stickfight.objects.Fighter;
 import com.berthouex.stickfight.resources.Assets;
+import com.berthouex.stickfight.resources.AudioManager;
 import com.berthouex.stickfight.screen.GameScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -14,6 +15,7 @@ public class Main extends Game {
     public ShapeRenderer shapeRenderer;
     public SpriteBatch batch;
     public Assets assets;
+    public AudioManager audioManager;
 
     public Screen gameScreen;
 
@@ -28,6 +30,8 @@ public class Main extends Game {
         assets = new Assets();
         assets.load();
         assets.manager.finishLoading();
+        audioManager = new AudioManager(assets.manager);
+        audioManager.playMusic();
 
         player = new Fighter(this, "Slim Stallone", new Color(1.0f, 0.2f, 0.2f, 1.0f));
         opponent = new Fighter(this, "Thin Diesel", new Color(0.25f, 0.7f, 1.0f, 1.0f));

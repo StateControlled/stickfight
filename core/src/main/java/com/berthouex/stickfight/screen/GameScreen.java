@@ -163,10 +163,14 @@ public class GameScreen implements Screen, InputProcessor {
 
     private void pauseGame() {
         gameState = GameState.PAUSED;
+        game.audioManager.pauseGameSounds();
+        game.audioManager.pauseMusic();
     }
 
     private void resumeGame() {
         gameState = GameState.RUNNING;
+        game.audioManager.resumeGameSounds();
+        game.audioManager.playMusic();
     }
 
     private void startRound() {
@@ -188,6 +192,7 @@ public class GameScreen implements Screen, InputProcessor {
         game.opponent.lose();
         roundsWon++;
 
+        game.audioManager.playSound(Assets.CHEER_SOUND);
         endRound();
     }
 
@@ -196,6 +201,7 @@ public class GameScreen implements Screen, InputProcessor {
         game.opponent.win();
         roundsLost++;
 
+        game.audioManager.playSound(Assets.BOO_SOUND);
         endRound();
     }
 
@@ -473,6 +479,13 @@ public class GameScreen implements Screen, InputProcessor {
                 if (game.player.isAttackActive()) {
                     // opponent gets hit
                     game.opponent.getHit(Fighter.HIT_STRENGTH);
+                    if (game.opponent.isBlocking()) {
+                        // play block sound
+                        game.audioManager.playSound(Assets.BLOCK_SOUND);
+                    } else {
+                        game.audioManager.playSound(Assets.HIT_SOUND);
+                    }
+
                     game.player.makeContact();
 
                     if (game.opponent.hasLost()) {
@@ -514,11 +527,12 @@ public class GameScreen implements Screen, InputProcessor {
         if (gameState == GameState.RUNNING) {
             pauseGame();
         }
+        game.audioManager.pauseMusic();
     }
 
     @Override
     public void resume() {
-
+        game.audioManager.playMusic();
     }
 
     @Override
@@ -557,6 +571,9 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 resumeGame();
             }
+        } else if (keycode == Input.Keys.N) {
+            // N toggles music on or off
+            game.audioManager.toggleMusic();
         } else {
             if (roundState == RoundState.IN_PROGRESS) {
                 // only if round is in progress check if player has pressed a movement key
@@ -622,6 +639,7 @@ public class GameScreen implements Screen, InputProcessor {
             // pause game
             if (pauseButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
                 pauseGame();
+                game.audioManager.playSound(Assets.CLICK_SOUND);
             } else if (roundState == RoundState.STARTING) {
                 // skip start round delay
                 roundStateTime = START_ROUND_DELAY;
@@ -633,9 +651,11 @@ public class GameScreen implements Screen, InputProcessor {
             if (gameState == GameState.GAME_OVER && playAgainButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
                 // if game over and play again button touched, start again
                 startGame();
+                game.audioManager.playSound(Assets.CLICK_SOUND);
             } else if (gameState == GameState.PAUSED && continueButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
-                // resume game
+                // resume game by clicking continue button
                 resumeGame();
+                game.audioManager.playSound(Assets.CLICK_SOUND);
             }
         }
         return true;
