@@ -11,7 +11,7 @@ import com.berthouex.stickfight.Main;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.GlobalVariables;
 
-public class Fighter {
+public class Fighter implements Updatable {
     // number of frame rows and columns in sprite sheet
     public static final int FRAME_ROWS = 2;
     public static final int FRAME_COLS = 3;
@@ -115,6 +115,7 @@ public class Fighter {
         batch.setColor(Color.WHITE);
     }
 
+    @Override
     public void update(float deltaTime) {
         stateTime += deltaTime;
 
