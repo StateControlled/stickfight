@@ -24,11 +24,12 @@ public class AudioManager {
     private final Sound cheerSound;
     private final Sound hitSound;
 
-    private final ArrayList<Sound> allGameSounds;
+    private final List<Sound> allGameSounds;
 
     /**
-     * Retreives assests from
-     * @param manager
+     * Retrieves assets and loads them into the game.
+     *
+     * @param manager   an AssetManager
      */
     public AudioManager(AssetManager manager) {
         music = manager.get(Assets.MUSIC);

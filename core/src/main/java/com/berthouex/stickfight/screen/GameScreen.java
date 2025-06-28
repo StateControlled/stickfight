@@ -94,16 +94,7 @@ public class GameScreen implements Screen, InputProcessor {
     // opponent AI
     private float opponentAiTimer;
     private boolean opponentAiMakingContactDecision;
-    private static final float OPPONENT_AI_CONTACT_DECISION_DELAY_EASY = 0.10f;
-    private static final float OPPONENT_AI_CONTACT_DECISION_DELAY_MEDIUM = 0.07f;
-    private static final float OPPONENT_AI_CONTACT_DECISION_DELAY_HARD = 0.01f;
-    private static final float OPPONENT_AI_BLOCK_CHANCE = 0.40f;
-    private static final float OPPONENT_AI_ATTACK_CHANCE = 0.80f;
-    private static final float OPPONENT_AI_NON_CONTACT_DECISION_DELAY = 0.50f;
     private boolean opponentAiPursuingPlayer;
-    private static final float OPPONENT_AI_PURSUE_PLAYER_CHANCE_EASY = 0.20f;
-    private static final float OPPONENT_AI_PURSUE_PLAYER_CHANCE_MEDIUM = 0.50f;
-    private static final float OPPONENT_AI_PURSUE_PLAYER_CHANCE_HARD = 0.99f;
 
     public GameScreen(Main game) {
         this.game = game;
@@ -278,13 +269,7 @@ public class GameScreen implements Screen, InputProcessor {
     private void renderHUD() {
         float hudMargin = 1.0f;
         smallFont.draw(game.batch, "WINS: " + roundsWon + " - " + roundsLost, hudMargin, viewport.getWorldHeight() - hudMargin);
-        String text = "DIFFICULTY: ";
-        switch (difficulty) {
-            case EASY -> text += "EASY";
-            case MEDIUM -> text += "MEDIUM";
-            case HARD -> text += "HARD";
-        }
-
+        String text = "DIFFICULTY: " + difficulty.getName();
         smallFont.draw(game.batch, text, viewport.getWorldWidth() - hudMargin, viewport.getWorldHeight() - hudMargin, 0, Align.right, false);
 
         float healthBarPadding = 0.5f;
@@ -579,8 +564,8 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 if (opponentAiTimer <= 0.0f) {
                     // pursue player or move in random direction
-                    float pursueChance = difficulty == Difficulty.EASY ? OPPONENT_AI_PURSUE_PLAYER_CHANCE_EASY :
-                        difficulty == Difficulty.MEDIUM ? OPPONENT_AI_PURSUE_PLAYER_CHANCE_MEDIUM : OPPONENT_AI_PURSUE_PLAYER_CHANCE_HARD;
+                    float pursueChance = difficulty.pursuePlayerChance();
+
                     if (MathUtils.random() <= pursueChance) {
                         // opponent is pursuing player
                         opponentAiPursuingPlayer = true;
@@ -592,7 +577,7 @@ public class GameScreen implements Screen, InputProcessor {
                     }
 
                     // set ai timer to decision delay
-                    opponentAiTimer = OPPONENT_AI_NON_CONTACT_DECISION_DELAY;
+                    opponentAiTimer = difficulty.nonContactDecisionDelay();
                 } else {
                     // if opponent is pursuing player, move to player
                     if (opponentAiPursuingPlayer) {
@@ -611,7 +596,7 @@ public class GameScreen implements Screen, InputProcessor {
         if (game.player.isAttacking()) {
             // if player is attacking and hasn't made contact, block or move away
             if (!game.player.hasMadeContact()) {
-                if (MathUtils.random() <= OPPONENT_AI_BLOCK_CHANCE) {
+                if (MathUtils.random() <= difficulty.blockChance()) {
                     game.opponent.block();
                 } else {
                     opponentAiMoveAwayFromPlayer();
@@ -619,7 +604,7 @@ public class GameScreen implements Screen, InputProcessor {
             }
         } else {
             // attack or move away
-            if (MathUtils.random() <= OPPONENT_AI_ATTACK_CHANCE) {
+            if (MathUtils.random() <= difficulty.attackChance()) {
                 if (MathUtils.randomBoolean()) {
                     game.opponent.punch();
                 } else {
@@ -631,12 +616,8 @@ public class GameScreen implements Screen, InputProcessor {
             }
         }
 
-        // set opponent ai timer to contact decision delay
-        switch (difficulty) {
-            case EASY -> opponentAiTimer = OPPONENT_AI_CONTACT_DECISION_DELAY_EASY;
-            case MEDIUM -> opponentAiTimer = OPPONENT_AI_CONTACT_DECISION_DELAY_MEDIUM;
-            case HARD -> opponentAiTimer = OPPONENT_AI_CONTACT_DECISION_DELAY_HARD;
-        }
+        // set opponent AI timer to contact decision delay
+        opponentAiTimer = difficulty.nonContactDecisionDelay();
     }
 
     /**
@@ -776,12 +757,7 @@ public class GameScreen implements Screen, InputProcessor {
             game.audioManager.toggleMusic();
         } else if (keycode == Input.Keys.L) {
           // change difficulty
-          switch (difficulty) {
-              case EASY -> difficulty = Difficulty.MEDIUM;
-              case MEDIUM -> difficulty = Difficulty.HARD;
-              case HARD -> difficulty = Difficulty.EASY;
-          }
-
+          difficulty = difficulty.nextDifficulty();
         } else {
             if (roundState == RoundState.IN_PROGRESS) {
                 // only if round is in progress check if player has pressed a movement key
