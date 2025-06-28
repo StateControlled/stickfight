@@ -106,6 +106,7 @@ public class GameScreen implements Screen, InputProcessor {
     private static final int BLOOD_SPLATTER_AMOUNT = 5;
     private static final float BLOOD_SPLATTER_OFFSET_X = 2.8f;
     private static final float BLOOD_SPLATTER_OFFSET_Y = 11f;
+
     /**
      * Initializes a new GameScreen.
      *
@@ -126,12 +127,18 @@ public class GameScreen implements Screen, InputProcessor {
         createBlood();
     }
 
+    /**
+     * Loads background textures.
+     */
     private void createGameArea() {
         // get textures from asset manager
         backgroundTexture = game.assets.manager.get(Assets.BACKGROUND_TEXTURE);
         frontRopesTexture = game.assets.manager.get(Assets.FRONT_ROPES_TEXTURE);
     }
 
+    /**
+     * Initializes fonts.
+     */
     private void setUpFonts() {
         smallFont = game.assets.manager.get(Assets.SMALL_FONT);
         smallFont.getData().setScale(GlobalVariables.WORLD_SCALE);
@@ -149,6 +156,9 @@ public class GameScreen implements Screen, InputProcessor {
         largeFont.setUseIntegerPositions(false);
     }
 
+    /**
+     * Creates buttons for menus.
+     */
     private void createButtons() {
         TextureAtlas buttonTextureAtlas = game.assets.manager.get(Assets.GAMEPLAY_BUTTONS_ATLAS);
         playAgainButtonSprite = new Sprite(buttonTextureAtlas.findRegion("PlayAgainButton"));
@@ -165,7 +175,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     /**
-     * Initialize the blood splatters
+     * Initialize the blood splatters.
      */
     private void createBlood() {
         playerBloodSplatters = new BloodSplatter[BLOOD_SPLATTER_AMOUNT];
@@ -189,6 +199,9 @@ public class GameScreen implements Screen, InputProcessor {
         startGame();
     }
 
+    /**
+     * Starts the game from the first round.
+     */
     private void startGame() {
         gameState = GameState.RUNNING;
         roundsWon = 0;
@@ -199,18 +212,27 @@ public class GameScreen implements Screen, InputProcessor {
         startRound();
     }
 
+    /**
+     * Pause the game.
+     */
     private void pauseGame() {
         gameState = GameState.PAUSED;
         game.audioManager.pauseGameSounds();
         game.audioManager.pauseMusic();
     }
 
+    /**
+     * Resume the game from a paused state.
+     */
     private void resumeGame() {
         gameState = GameState.RUNNING;
         game.audioManager.resumeGameSounds();
         game.audioManager.playMusic();
     }
 
+    /**
+     * Starts a round.
+     */
     private void startRound() {
         game.player.getReady(playerStartPositionX, fighterStartPositionY);
         game.opponent.getReady(opponentStartPositionX, fighterStartPositionY);
@@ -220,11 +242,17 @@ public class GameScreen implements Screen, InputProcessor {
         roundTimer = MAX_ROUND_TIME;
     }
 
+    /**
+     * Ends a round.
+     */
     private void endRound() {
         roundState = RoundState.ENDING;
         roundStateTime = 0.0f;
     }
 
+    /**
+     * Wins a round for the player.
+     */
     private void winRound() {
         game.player.win();
         game.opponent.lose();
@@ -234,6 +262,9 @@ public class GameScreen implements Screen, InputProcessor {
         endRound();
     }
 
+    /**
+     * Loses a round for the player.
+     */
     private void loseRound() {
         game.player.lose();
         game.opponent.win();
@@ -289,7 +320,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     /**
-     * Draw fighters and then any active blood splatters
+     * Draw fighters and then any active blood splatters.
      */
     private void renderFighters() {
         if (game.player.getPosition().y > game.opponent.getPosition().y) {
@@ -307,6 +338,11 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    /**
+     * Renders blood splatters to the screen.
+     *
+     * @param bloodSplatters    splatter objects to render
+     */
     private void renderBloodSplatters(BloodSplatter[] bloodSplatters) {
         if (showingBlood) {
             for (BloodSplatter splatter : bloodSplatters) {
@@ -315,6 +351,10 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    /**
+     * Renders the player's HUD to the screen, including player and opponent health bars, round timer,
+     * number of wins and losses, and the current difficulty setting.
+     */
     private void renderHUD() {
         float hudMargin = 1.0f;
         smallFont.draw(game.batch, "WINS: " + roundsWon + " - " + roundsLost, hudMargin, viewport.getWorldHeight() - hudMargin);
@@ -352,8 +392,21 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
 
         // draw names
-        smallFont.draw(game.batch, game.player.getName(), hudMargin + healthBarBackgroundPadding + healthBarPadding, fighterNamePositionY);
-        smallFont.draw(game.batch, game.opponent.getName(), viewport.getWorldWidth() - hudMargin - healthBarBackgroundPadding - healthBarPadding, fighterNamePositionY, 0, Align.right, false);
+        smallFont.draw(
+            game.batch,
+            game.player.getName(),
+            hudMargin + healthBarBackgroundPadding + healthBarPadding,
+            fighterNamePositionY);
+
+        smallFont.draw(
+            game.batch,
+            game.opponent.getName(),
+            viewport.getWorldWidth() - hudMargin - healthBarBackgroundPadding - healthBarPadding,
+            fighterNamePositionY,
+            0,
+            Align.right,
+            false
+        );
 
         // draw round timer
         if (roundTimer < CRITICAL_ROUND_TIME) {
@@ -368,6 +421,9 @@ public class GameScreen implements Screen, InputProcessor {
         mediumFont.setColor(DEFAULT_FONT_COLOR);
     }
 
+    /**
+     * Draws introductory text for a round to the screen.
+     */
     private void renderStartRoundText() {
         String text;
         if (roundStateTime < START_ROUND_DELAY * 0.5f) {
@@ -378,6 +434,9 @@ public class GameScreen implements Screen, InputProcessor {
         mediumFont.draw(game.batch, text, viewport.getWorldWidth() / 2.0f, viewport.getWorldHeight() / 2.0f, 0, Align.center, false);
     }
 
+    /**
+     * Renders the pause button to the screen.
+     */
     private void renderPauseButton() {
         pauseButtonSprite.setPosition(viewport.getWorldWidth() - PAUSE_BUTTON_MARGIN - pauseButtonSprite.getWidth(), PAUSE_BUTTON_MARGIN);
         pauseButtonSprite.draw(game.batch);
@@ -433,6 +492,9 @@ public class GameScreen implements Screen, InputProcessor {
         );
     }
 
+    /**
+     * Darkens the screen and displays buttons when the game is paused.
+     */
     private void renderPauseOverlay() {
         game.batch.end();
 
@@ -479,6 +541,11 @@ public class GameScreen implements Screen, InputProcessor {
         );
     }
 
+    /**
+     * Performs game logic.
+     *
+     * @param deltaTime delta time
+     */
     private void update(float deltaTime) {
         if (roundState == RoundState.STARTING && roundStateTime >= START_ROUND_DELAY) {
             // if the start round delay has been reached, start the round
@@ -605,7 +672,11 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
-
+    /**
+     * Restricts the given Vector to be within the Ring's bounds.
+     *
+     * @param position  a position to check
+     */
     private void keepWithinRingBounds(Vector2 position) {
         if (position.y < RING_MIN_Y) {
             position.y = RING_MIN_Y;
@@ -620,14 +691,25 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    /**
+     * @param position1 the first position
+     * @param position2 the second position
+     *
+     * @return  <code>true</code> if two positions are within a defined contact range
+     */
     private boolean areWithinContactDistance(Vector2 position1, Vector2 position2) {
         float xDistance = Math.abs(position1.x - position2.x);
         float yDistance = Math.abs(position1.y - position2.y);
         return xDistance <= fighterContactDistanceX && yDistance <= fighterContactDistanceY;
     }
 
+    /**
+     * Opponent AI decision tree.
+     *
+     * @param deltaTime delta time
+     */
     private void performOpponentAI(float deltaTime) {
-        // check contact decision (attack, block, etc)
+        // check contact decision (attack, block, etc.)
         if (opponentAiMakingContactDecision) {
             if (game.opponent.isBlocking()) {
                 // if opponent is blocking, stop blocking if the fighters are not within contact distance or player isn't attacking
@@ -667,7 +749,7 @@ public class GameScreen implements Screen, InputProcessor {
                         opponentAiMoveRandomly();
                     }
 
-                    // set ai timer to decision delay
+                    // set AI timer to decision delay
                     opponentAiTimer = difficulty.nonContactDecisionDelay();
                 } else {
                     // if opponent is pursuing player, move to player
@@ -678,7 +760,6 @@ public class GameScreen implements Screen, InputProcessor {
                 }
             }
         }
-
     }
 
     private void opponentAiMakeContactDecision() {
@@ -712,7 +793,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     /**
-     * Moves opponent fighter towards player
+     * Moves opponent fighter towards player.
      */
     private void opponentAiMoveTowardPlayer() {
         Vector2 playerPosition = game.player.getPosition();
@@ -738,39 +819,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     /**
-     * Randomly set vertical and horizontal movement of the opponent fighter
-     */
-    private void opponentAiMoveRandomly() {
-        // horizontal movement
-        switch(MathUtils.random(2)) {
-            case 0:
-                game.opponent.moveLeft();
-                break;
-            case 1:
-                game.opponent.moveRight();
-                break;
-            case 2:
-            default:
-                game.opponent.stopMovingRight();
-                game.opponent.stopMovingLeft();
-        }
-
-        switch(MathUtils.random(2)) {
-            case 0:
-                game.opponent.moveUp();
-                break;
-            case 1:
-                game.opponent.moveDown();
-                break;
-            case 2:
-            default:
-                game.opponent.stopMovingUp();
-                game.opponent.stopMovingDown();
-        }
-    }
-
-    /**
-     * Moves opponent fighter away from the player
+     * Moves opponent fighter away from the player.
      */
     private void opponentAiMoveAwayFromPlayer() {
         Vector2 playerPosition = game.player.getPosition();
@@ -788,6 +837,41 @@ public class GameScreen implements Screen, InputProcessor {
             game.opponent.moveDown();
         }
     }
+
+    /**
+     * Randomly set vertical and horizontal movement of the opponent fighter
+     */
+    private void opponentAiMoveRandomly() {
+        // horizontal movement
+        switch(MathUtils.random(2)) {
+            case 0:
+                game.opponent.moveLeft();
+                break;
+            case 1:
+                game.opponent.moveRight();
+                break;
+            case 2:
+            default:
+                game.opponent.stopMovingRight();
+                game.opponent.stopMovingLeft();
+        }
+
+        // vertical movement
+        switch(MathUtils.random(2)) {
+            case 0:
+                game.opponent.moveUp();
+                break;
+            case 1:
+                game.opponent.moveDown();
+                break;
+            case 2:
+            default:
+                game.opponent.stopMovingUp();
+                game.opponent.stopMovingDown();
+        }
+    }
+
+    // SCREEN
 
     @Override
     public void resize(int width, int height) {
