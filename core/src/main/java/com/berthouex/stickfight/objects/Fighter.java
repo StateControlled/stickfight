@@ -11,7 +11,7 @@ import com.berthouex.stickfight.Main;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.GlobalVariables;
 
-public class Fighter implements Updatable {
+public class Fighter extends GameObject {
     // number of frame rows and columns in sprite sheet
     public static final int FRAME_ROWS = 2;
     public static final int FRAME_COLS = 3;
@@ -73,6 +73,11 @@ public class Fighter implements Updatable {
         initializePunchAnimation(manager);
         initializeWalkAnimation(manager);
         initializeWinAnimation(manager);
+    }
+
+    public void alterFromFighterChoice(FighterChoice fighterChoice) {
+        this.name = fighterChoice.getName();
+        this.color = fighterChoice.getColor();
     }
 
     public void getReady(float positionX, float positionY) {
