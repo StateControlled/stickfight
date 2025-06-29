@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Json;
@@ -15,11 +14,13 @@ import com.berthouex.stickfight.objects.Fighter;
 import com.berthouex.stickfight.objects.FighterChoice;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.AudioManager;
+import com.berthouex.stickfight.resources.SettingsManager;
 import com.berthouex.stickfight.screen.GameScreen;
 import com.berthouex.stickfight.screen.MainMenuScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
+    public SettingsManager settingsManager;
     public ShapeRenderer shapeRenderer;
     public SpriteBatch batch;
     public Assets assets;
@@ -34,6 +35,9 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        settingsManager = new SettingsManager();
+        settingsManager.load();
+
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
@@ -41,7 +45,22 @@ public class Main extends Game {
         assets.load();
         assets.manager.finishLoading();
         audioManager = new AudioManager(assets.manager);
-        audioManager.playMusic();
+
+        if (settingsManager.isMusicSettingOn()) {
+            audioManager.enableMusic();
+        } else {
+            audioManager.disableMusic();
+        }
+
+        if (settingsManager.isSoundSettingOn()) {
+            audioManager.enableSounds();
+        } else {
+            audioManager.disableSound();
+        }
+
+        if (settingsManager.isFullScreenSettingOn()) {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        }
 
         loadFighterChoiceList();
 

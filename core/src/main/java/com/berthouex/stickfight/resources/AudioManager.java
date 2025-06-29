@@ -10,7 +10,7 @@ import com.badlogic.gdx.audio.Sound;
 /**
  * Handles game audio
  */
-public class AudioManager {
+public class AudioManager implements Manager {
     // Settings
     private boolean musicEnabled = true;
     private boolean soundsEnabled = true;
@@ -42,6 +42,11 @@ public class AudioManager {
         allGameSounds = new ArrayList<>(List.of(blockSound, booSound, cheerSound, hitSound));
 
         music.setLooping(true);
+    }
+
+    @Override
+    public void load() {
+
     }
 
     public void enableMusic() {

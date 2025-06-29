@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 /**
  * Stores references to game assets, loads those assets, and disposes of them.
  */
-public class Assets {
+public class Assets implements Manager {
     public final AssetManager manager = new AssetManager();
 
     // gameplay assets
@@ -53,6 +53,7 @@ public class Assets {
     /**
      * Loads all assets.
      */
+    @Override
     public void load() {
         loadGameplayAssets();
         loadFonts();
