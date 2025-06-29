@@ -1052,6 +1052,22 @@ public class GameScreen implements Screen, InputProcessor {
                 // resume game by clicking continue button
                 resumeGame();
                 game.audioManager.playSound(Assets.CLICK_SOUND);
+            } else if (mainMenuButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
+                // switch to main menu screen
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.audioManager.stopGameSounds();
+
+                if (gameState == GameState.PAUSED) {
+                    game.audioManager.playMusic();
+                }
+
+                // deactivate all blood
+                for (int i = 0; i < BLOOD_SPLATTER_AMOUNT; i++) {
+                    playerBloodSplatters[i].deactivate();
+                    opponentBloodSplatters[i].deactivate();
+                }
+
+                game.setScreen(game.mainMenuScreen);
             }
         }
         return true;

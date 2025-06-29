@@ -2,15 +2,18 @@ package com.berthouex.stickfight.screen;
 
 import java.util.Locale;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -29,10 +32,15 @@ public class MainMenuScreen implements Screen {
     private Image fighterDisplayImage;
 
     // button widgets
+    /** Starts the game **/
     private Button playGameButton;
+    /** Switches to settings screen **/
     private Button settingsButton;
+    /** Exits the game **/
     private Button quitGameButton;
+    /** Select previous fighter **/
     private Button previousFighterButton;
+    /** Select next fighter **/
     private Button nextFighterButton;
 
     // label widgets
@@ -131,6 +139,47 @@ public class MainMenuScreen implements Screen {
             nextFighterButton.getWidth() * GlobalVariables.WORLD_SCALE,
             nextFighterButton.getHeight() * GlobalVariables.WORLD_SCALE
         );
+
+        addButtonListeners();
+    }
+
+    private void addButtonListeners() {
+        playGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.setScreen(game.gameScreen);
+            }
+        });
+
+        settingsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+            }
+        });
+
+        quitGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                Gdx.app.exit();
+            }
+        });
+
+        previousFighterButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+            }
+        });
+
+        nextFighterButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+            }
+        });
     }
 
     private void createLabels() {
@@ -212,6 +261,8 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(stage); // set stage as input processor
+
         fighterDisplayNameLabel.setText(game.player.getName().toUpperCase(Locale.getDefault()));
         fighterDisplayImage.setColor(game.player.getColor());
     }
@@ -230,12 +281,12 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void pause() {
-
+        game.audioManager.pauseMusic();
     }
 
     @Override
     public void resume() {
-
+        game.audioManager.playMusic();
     }
 
     @Override
