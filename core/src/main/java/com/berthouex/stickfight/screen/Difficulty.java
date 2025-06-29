@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public enum Difficulty {
-    EASY    ("EASY",    0.10f, 0.40f, 0.70f, 0.20f),
+    EASY    ("EASY",    0.10f, 0.30f, 0.70f, 0.20f),
     MEDIUM  ("MEDIUM",  0.07f, 0.35f, 0.75f, 0.50f),
-    HARD    ("HARD",    0.01f, 0.30f, 0.80f, 0.99f);
+    HARD    ("HARD",    0.01f, 0.40f, 0.80f, 0.99f);
 
     private final String name;
     private final float nonContactDecisionDelay;

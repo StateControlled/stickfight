@@ -183,8 +183,7 @@ public class MainMenuScreen implements Screen {
                 }
                 // set name and color to chosen fighter
                 FighterChoice fighterChoice = game.fighterChoiceList.get(currentFighterChoiceIndex);
-                game.player.setName(fighterChoice.getName());
-                game.player.setColor(fighterChoice.getColor());
+                game.player.alterFromFighterChoice(fighterChoice);
                 fighterDisplayImage.setColor(fighterChoice.getColor());
                 fighterDisplayNameLabel.setText(fighterChoice.getName().toUpperCase(Locale.getDefault()));
             }
@@ -211,7 +210,11 @@ public class MainMenuScreen implements Screen {
     }
 
     private void chooseRandomOpponent() {
-        Optional<FighterChoice> fighterChoiceOption = game.fighterChoiceList.stream().filter(fighterChoice1 -> !fighterChoice1.getName().equals(game.player.getName())).findFirst();
+        Optional<FighterChoice> fighterChoiceOption =
+            game.fighterChoiceList.stream()
+                .filter(fighter -> !fighter.getName().equals(game.player.getName()))
+                .findFirst();
+
         if (fighterChoiceOption.isPresent()) {
             FighterChoice fighterChoice = fighterChoiceOption.get();
             game.opponent.alterFromFighterChoice(fighterChoice);

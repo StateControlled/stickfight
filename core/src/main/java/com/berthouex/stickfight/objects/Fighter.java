@@ -4,7 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.berthouex.stickfight.Main;
@@ -39,10 +39,8 @@ public class Fighter extends GameObject {
     }
 
     private State state;
-    private float stateTime;
     private State renderState;
     private float renderStateTime;
-    private final Vector2 position = new Vector2();
     private final Vector2 movementDirection = new Vector2();
     private float life;
     private int facing; // -1 or 1
@@ -59,6 +57,7 @@ public class Fighter extends GameObject {
     private Animation<TextureRegion> winAnimation;
 
     public Fighter(Main game, String name, Color color) {
+        super();
         this.name = name;
         this.color = color;
         initializeAnimations(game.assets.manager);
@@ -75,11 +74,20 @@ public class Fighter extends GameObject {
         initializeWinAnimation(manager);
     }
 
+    /**
+     * @param fighterChoice a FighterChoice object that this Fighter will copy properties from
+     */
     public void alterFromFighterChoice(FighterChoice fighterChoice) {
         this.name = fighterChoice.getName();
         this.color = fighterChoice.getColor();
     }
 
+    /**
+     * Resets this Fighter to a default state.
+     *
+     * @param positionX x-coordinate
+     * @param positionY y-coordinate
+     */
     public void getReady(float positionX, float positionY) {
         state = State.IDLE;
         renderState = State.IDLE;
@@ -91,7 +99,8 @@ public class Fighter extends GameObject {
         madeContact = false;
     }
 
-    public void render(SpriteBatch batch) {
+    @Override
+    public void render(Batch batch) {
         // get current animation frame
         TextureRegion currentFrame = switch (renderState) {
             case BLOCK -> blockAnimation.getKeyFrame(renderStateTime, true);
@@ -356,10 +365,6 @@ public class Fighter extends GameObject {
         return frames;
     }
 
-    public Vector2 getPosition() {
-        return position;
-    }
-
     public float getLife() {
         return life;
     }
@@ -368,16 +373,8 @@ public class Fighter extends GameObject {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Color getColor() {
         return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 
 }

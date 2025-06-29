@@ -1,6 +1,7 @@
 package com.berthouex.stickfight;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.berthouex.stickfight.objects.Fighter;
 import com.berthouex.stickfight.objects.FighterChoice;
+import com.berthouex.stickfight.objects.Player;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.AudioManager;
 import com.berthouex.stickfight.resources.SettingsManager;
@@ -33,8 +35,8 @@ public class Main extends Game {
     public Screen settingsScreen;
     public Screen loadingScreen;
 
-    public final ArrayList<FighterChoice> fighterChoiceList = new ArrayList<>();
-    public Fighter player;
+    public final List<FighterChoice> fighterChoiceList = new ArrayList<>();
+    public Player player;
     public Fighter opponent;
 
     @Override
@@ -70,7 +72,7 @@ public class Main extends Game {
 
         loadFighterChoiceList();
 
-        player = new Fighter(this, fighterChoiceList.get(0).getName(), fighterChoiceList.get(0).getColor());
+        player = new Player(this, fighterChoiceList.get(0).getName(), fighterChoiceList.get(0).getColor());
         opponent = new Fighter(this, fighterChoiceList.get(1).getName(), fighterChoiceList.get(1).getColor());
 
         // screens

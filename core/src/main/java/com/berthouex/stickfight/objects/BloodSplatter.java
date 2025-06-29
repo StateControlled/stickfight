@@ -5,21 +5,19 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.berthouex.stickfight.Main;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.GlobalVariables;
 
-public class BloodSplatter implements Updatable {
+public class BloodSplatter extends GameObject {
     // state
-    private float stateTime;
     private boolean active;
-    private final Vector2 position = new Vector2();
 
     // animation
     private Animation<TextureRegion> splatterAnimation;
 
     public BloodSplatter(Main game) {
+        super();
         stateTime = 0.0f;
         active = false;
         initializeSplatterAnimation(game.assets.manager);
@@ -56,14 +54,15 @@ public class BloodSplatter implements Updatable {
         }
     }
 
-    public void render(Batch spriteBatch) {
+    @Override
+    public void render(Batch batch) {
         if (!active) {
             return;
         }
 
         // draw current animation frame
         TextureRegion currentFrame = splatterAnimation.getKeyFrame(stateTime);
-        spriteBatch.draw(
+        batch.draw(
             currentFrame,
             position.x,
             position.y,

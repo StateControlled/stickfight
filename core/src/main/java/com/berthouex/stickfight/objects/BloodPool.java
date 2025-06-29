@@ -5,24 +5,22 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.berthouex.stickfight.Main;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.GlobalVariables;
 
-public class BloodPool implements Updatable {
+public class BloodPool extends GameObject {
     private static final float FADE_TIME = 60.0f;
     // state
-    private float stateTime;
     private boolean active;
     private float alpha;
-    private final Vector2 position = new Vector2();
 
     // texture
-    private TextureRegion texture;
+    private final TextureRegion texture;
     private static final int TEXTURE_AMOUNT = 3;
 
     public BloodPool(Main game) {
+        super();
         stateTime = 0.0f;
         active = false;
         alpha = 1.0f;
@@ -61,15 +59,16 @@ public class BloodPool implements Updatable {
         }
     }
 
-    public void render(Batch spriteBatch) {
+    @Override
+    public void render(Batch batch) {
         if (!active) {
             return;
         }
 
-        spriteBatch.setColor(1, 1, 1, alpha);
+        batch.setColor(1, 1, 1, alpha);
 
         // draw current animation frame
-        spriteBatch.draw(
+        batch.draw(
             texture,
             position.x,
             position.y,
@@ -77,6 +76,6 @@ public class BloodPool implements Updatable {
             texture.getRegionHeight() * GlobalVariables.WORLD_SCALE
         );
 
-        spriteBatch.setColor(1, 1, 1, 1); // reset color to fully opaque
+        batch.setColor(1, 1, 1, 1); // reset color to fully opaque
     }
 }
