@@ -1,5 +1,7 @@
 package com.berthouex.stickfight.screen;
 
+import java.util.Locale;
+
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -8,7 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.berthouex.stickfight.Main;
 import com.berthouex.stickfight.resources.Assets;
@@ -49,9 +53,14 @@ public class MainMenuScreen implements Screen {
                 stage.getCamera()
             ));
         this.menuItemsAtlas = game.assets.manager.get(Assets.MENU_ITEMS_ATLAS);
+
+        // create widgets
         createImages();
         createButtons();
         createLabels();
+
+        // screen setup
+        createTables();
     }
 
     private void createImages() {
@@ -138,19 +147,85 @@ public class MainMenuScreen implements Screen {
         fighterDisplayNameLabel = new Label("DEFAULT", fighterDisplayNameLabelStyle);
     }
 
+    private void createTables() {
+        stage.setDebugAll(true);
+
+        // primary table layout
+        Table mainTable = new Table();
+        mainTable.setFillParent(true); // fill entire screen
+        mainTable.setRound(false);
+        stage.addActor(mainTable);
+
+        //////////////////////////////////////
+
+        // left-side table with logo and fighter selection
+        Table leftSideTable = new Table();
+        leftSideTable.setRound(false);
+        leftSideTable.add(logoImage).size(logoImage.getWidth(), logoImage.getHeight());
+        leftSideTable.row().padTop(1.5f); // add new row so next element will be added below
+
+        // fighter selection, encompassing table nested in mainTable. located below logo
+        Table fighterDisplayTable = new Table(); // "Choose A Fighter"
+        fighterDisplayTable.setRound(false);
+        fighterDisplayTable.setBackground(fighterDisplayBackgroundImage.getDrawable());
+        fighterDisplayTable.setSize(fighterDisplayBackgroundImage.getWidth(), fighterDisplayBackgroundImage.getHeight()); // set to same size as background image
+        // selection buttons and image
+        Table fighterDisplayInnerTable = new Table();
+        fighterDisplayInnerTable.setRound(false);
+        fighterDisplayInnerTable.add(previousFighterButton).size(previousFighterButton.getWidth(), previousFighterButton.getHeight());
+        fighterDisplayInnerTable.add(fighterDisplayImage).size(fighterDisplayImage.getWidth(), fighterDisplayImage.getHeight()).padLeft(0.5f).padRight(0.5f);
+        fighterDisplayInnerTable.add(nextFighterButton).size(nextFighterButton.getWidth(), nextFighterButton.getHeight());
+        fighterDisplayInnerTable.pack(); // makes sure the size is set correctly
+
+        // add an empty row to fighterDisplayTable for alignment purposes
+        fighterDisplayTable.add().height(fighterDisplayBackgroundImage.getHeight() / 2.0f - fighterDisplayImage.getHeight() / 2.0f - 0.5f);
+        fighterDisplayTable.row();
+
+        // add inner fighter table to fighterDisplayTable
+        fighterDisplayTable.add(fighterDisplayInnerTable).size(fighterDisplayInnerTable.getWidth(), fighterDisplayInnerTable.getHeight());
+
+        // add name label to fighterDisplayTable
+        fighterDisplayTable.row();
+        fighterDisplayTable.add(fighterDisplayNameLabel).height(fighterDisplayBackgroundImage.getHeight() / 2.0f - fighterDisplayImage.getHeight() / 2.0f - 0.5f);
+
+        // add fighter display to leftSideTable
+        leftSideTable.add(fighterDisplayTable).size(fighterDisplayTable.getWidth(), fighterDisplayTable.getHeight());
+
+        //////////////////////////////////////
+
+        Table rightSideTable = new Table();
+        rightSideTable.setRound(false);
+        rightSideTable.add(playGameButton).size(playGameButton.getWidth(), playGameButton.getHeight());
+        rightSideTable.row().padTop(1.0f);
+        rightSideTable.add(settingsButton).size(settingsButton.getWidth(), settingsButton.getHeight());
+        rightSideTable.row().padTop(1.0f);
+        rightSideTable.add(quitGameButton).size(quitGameButton.getWidth(), quitGameButton.getHeight());
+        rightSideTable.row().padTop(1.0f);
+
+        //////////////////////////////////////
+
+        mainTable.add(leftSideTable);
+        mainTable.add(rightSideTable).padLeft(2.0f);
+    }
+
+    // SCREEN
+
     @Override
     public void show() {
-
+        fighterDisplayNameLabel.setText(game.player.getName().toUpperCase(Locale.getDefault()));
+        fighterDisplayImage.setColor(game.player.getColor());
     }
 
     @Override
     public void render(float delta) {
-
+        ScreenUtils.clear(GlobalVariables.BLUE_BACKGROUND);
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -170,7 +245,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 
 }

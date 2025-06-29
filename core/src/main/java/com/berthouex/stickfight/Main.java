@@ -9,6 +9,7 @@ import com.berthouex.stickfight.objects.Fighter;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.AudioManager;
 import com.berthouex.stickfight.screen.GameScreen;
+import com.berthouex.stickfight.screen.MainMenuScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -18,6 +19,7 @@ public class Main extends Game {
     public AudioManager audioManager;
 
     public Screen gameScreen;
+    public Screen mainMenuScreen;
 
     public Fighter player;
     public Fighter opponent;
@@ -36,8 +38,11 @@ public class Main extends Game {
         player = new Fighter(this, "Slim Stallone", new Color(1.0f, 0.2f, 0.2f, 1.0f));
         opponent = new Fighter(this, "Thin Diesel", new Color(0.25f, 0.7f, 1.0f, 1.0f));
 
+        // screens
         gameScreen = new GameScreen(this);
-        setScreen(gameScreen);
+        mainMenuScreen = new MainMenuScreen(this);
+
+        setScreen(mainMenuScreen);
     }
 
     @Override

@@ -15,6 +15,7 @@ public class GlobalVariables {
 
     // Colors
     public static final Color GOLD = new Color(0.94f, 0.85f, 0.32f, 1.0f);
+    public static final Color BLUE_BACKGROUND = new Color(0.25f, 0.42f, 0.61f, 1.0f);
 
     private GlobalVariables() {
 
