@@ -80,7 +80,7 @@ public class SettingsManager implements Manager {
         return fullScreenSettingOn;
     }
 
-    public void setFullScreenSettingOn(boolean on) {
+    public void toggleFullScreenSetting(boolean on) {
         if (fullScreenSettingOn != on) {
             this.fullScreenSettingOn = on;
             preferences.putBoolean(IS_FULL_SCREEN_ON, on).flush();

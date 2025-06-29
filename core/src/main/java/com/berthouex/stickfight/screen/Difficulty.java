@@ -71,6 +71,14 @@ public enum Difficulty {
         };
     }
 
+    public Difficulty previousDifficulty() {
+        return switch(this) {
+            case EASY -> HARD;
+            case MEDIUM -> EASY;
+            case HARD -> MEDIUM;
+        };
+    }
+
     /**
      * Given an integer, searches for the Enum with the same ordinal. Throws a {@link NoSuchElementException} if no match is found.
      *

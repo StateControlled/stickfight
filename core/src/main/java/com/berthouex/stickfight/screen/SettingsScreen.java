@@ -1,12 +1,15 @@
 package com.berthouex.stickfight.screen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -176,6 +179,88 @@ public class SettingsScreen implements Screen {
             bloodCheckButton.getHeight() * GlobalVariables.WORLD_SCALE
         );
 
+        addButtonListeners();
+    }
+
+    private void addButtonListeners() {
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.setScreen(game.mainMenuScreen);
+            }
+        });
+
+        musicToggleButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.settingsManager.toggleMusicSetting(musicToggleButton.isChecked());
+
+                if (game.settingsManager.isMusicSettingOn()) {
+                    game.audioManager.enableMusic();
+                } else {
+                    game.audioManager.disableMusic();
+                }
+            }
+        });
+
+        soundsToggleButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.settingsManager.toggleSoundSetting(soundsToggleButton.isChecked());
+
+                if (game.settingsManager.isSoundSettingOn()) {
+                    game.audioManager.enableSounds();
+                } else {
+                    game.audioManager.disableSound();
+                }
+            }
+        });
+
+        previousDifficultyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                Difficulty previous = game.settingsManager.getDifficultySetting().previousDifficulty();
+                game.settingsManager.setDifficultySetting(previous);
+                showDifficulty(previous);
+            }
+        });
+
+        nextDifficultyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                Difficulty next = game.settingsManager.getDifficultySetting().nextDifficulty();
+                game.settingsManager.setDifficultySetting(next);
+                showDifficulty(next);
+            }
+        });
+
+        fullScreenCheckButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.settingsManager.toggleFullScreenSetting(fullScreenCheckButton.isChecked());
+
+                if (game.settingsManager.isFullScreenSettingOn()) {
+                    Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                } else {
+                    Gdx.graphics.setWindowedMode(GlobalVariables.WINDOW_WIDTH, GlobalVariables.WINDOW_HEIGHT);
+                }
+            }
+        });
+
+        bloodCheckButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.settingsManager.toggleBloodSetting(bloodCheckButton.isChecked());
+            }
+        });
+
     }
 
     private void createTables() {
@@ -323,7 +408,50 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(stage);
 
+        synchronizeSettingsDisplay();
+    }
+
+    private void synchronizeSettingsDisplay() {
+        // widgets show current settings
+        if (game.settingsManager.isMusicSettingOn()) {
+            musicToggleButton.setChecked(true);
+        }
+
+        if (game.settingsManager.isSoundSettingOn()) {
+            soundsToggleButton.setChecked(true);
+        }
+
+        showDifficulty(game.settingsManager.getDifficultySetting());
+
+        if (game.settingsManager.isFullScreenSettingOn()) {
+            fullScreenCheckButton.setChecked(true);
+        }
+
+        if (game.settingsManager.isBloodSettingOn()) {
+            bloodCheckButton.setChecked(true);
+        }
+    }
+
+    private void showDifficulty(Difficulty difficulty) {
+        switch (difficulty) {
+            case EASY -> {
+                easyImage.setVisible(true);
+                mediumImage.setVisible(false);
+                hardImage.setVisible(false);
+            }
+            case MEDIUM -> {
+                easyImage.setVisible(false);
+                mediumImage.setVisible(true);
+                hardImage.setVisible(false);
+            }
+            case HARD -> {
+                easyImage.setVisible(false);
+                mediumImage.setVisible(false);
+                hardImage.setVisible(true);
+            }
+        }
     }
 
     @Override

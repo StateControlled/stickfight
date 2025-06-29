@@ -208,6 +208,10 @@ public class GameScreen implements Screen, InputProcessor {
         // process user input
         Gdx.input.setInputProcessor(this);
 
+        // retrieve settings
+        difficulty = game.settingsManager.getDifficultySetting();
+        showingBlood = game.settingsManager.isBloodSettingOn();
+
         // start the game
         startGame();
     }
