@@ -57,10 +57,11 @@ public class Assets {
         loadGameplayAssets();
         loadFonts();
         loadAudio();
+        loadMenuAssets();
     }
 
     /**
-     * Assets are loaded asynchronously by LibGDX
+     * Assets are loaded asynchronously by LibGDX.
      */
     private void loadGameplayAssets() {
         TextureLoader.TextureParameter parameter = new TextureLoader.TextureParameter();
@@ -118,6 +119,11 @@ public class Assets {
         manager.load(CHEER_SOUND, Sound.class);
         manager.load(HIT_SOUND, Sound.class);
         manager.load(MUSIC, Music.class);
+    }
+
+    private void loadMenuAssets() {
+        // load menu items texture atlas
+        manager.load(MENU_ITEMS_ATLAS, TextureAtlas.class);
     }
 
     public void dispose() {
