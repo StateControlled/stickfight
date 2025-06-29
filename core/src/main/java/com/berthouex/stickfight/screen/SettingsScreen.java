@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -177,7 +179,146 @@ public class SettingsScreen implements Screen {
     }
 
     private void createTables() {
-        
+//        stage.setDebugAll(true);
+
+        Table mainTable = new Table();
+        mainTable.setFillParent(true); // fill entire screen
+        mainTable.setRound(false);
+        stage.addActor(mainTable);
+
+        // banner table, back button
+        Table bannerTable = buildBannerTable();
+        mainTable.add(bannerTable);
+        mainTable.row().padTop(1.0f);
+
+        // audio settings table
+        Table audioTable = buildAudioTable();
+        mainTable.add(audioTable);
+        mainTable.row().padTop(1.0f);
+
+        // difficulty settings table
+        Table difficultyTable = buildDifficultyTable();
+        mainTable.add(difficultyTable).size(difficultyTable.getWidth(), difficultyTable.getHeight());
+        mainTable.row().padTop(1.0f);
+
+        // bottom table
+        Table bottomTable = buildBottomTable();
+        mainTable.add(bottomTable);
+    }
+
+    private Table buildBottomTable() {
+        Table bottomTable = new Table();
+        bottomTable.setRound(false);
+
+        Table fullScreenTable = buildFullScreenTable();
+        bottomTable.add(fullScreenTable).size(fullScreenTable.getWidth(), fullScreenTable.getHeight());
+
+        Table bloodTable = buildBloodTable();
+        bottomTable.add(bloodTable).size(bloodTable.getWidth(), bloodTable.getHeight());
+
+        return bottomTable;
+    }
+
+    private Table buildFullScreenTable() {
+        Table fullScreenTable = new Table();
+        fullScreenTable.setRound(false);
+        fullScreenTable.setBackground(fullScreenSettingBackgroundImage.getDrawable());
+        fullScreenTable.setSize(fullScreenSettingBackgroundImage.getWidth(), fullScreenSettingBackgroundImage.getHeight());
+
+        fullScreenTable.add().width(fullScreenSettingBackgroundImage.getWidth() - fullScreenCheckButton.getWidth() - 2.0f); // empty cell for alignment
+        fullScreenTable.add(fullScreenCheckButton).size(fullScreenCheckButton.getWidth(), fullScreenCheckButton.getHeight());
+
+        return fullScreenTable;
+    }
+
+    private Table buildBloodTable() {
+        Table bloodTable = new Table();
+        bloodTable.setRound(false);
+        bloodTable.setBackground(bloodSettingBackgroundImage.getDrawable());
+        bloodTable.setSize(bloodSettingBackgroundImage.getWidth(), bloodSettingBackgroundImage.getHeight());
+
+        bloodTable.add().width(bloodSettingBackgroundImage.getWidth() - bloodCheckButton.getWidth() - 2.0f); // empty cell for alignment
+        bloodTable.add(bloodCheckButton).size(bloodCheckButton.getWidth(), bloodCheckButton.getHeight());
+
+        return bloodTable;
+    }
+
+    private Table buildDifficultyTable() {
+        Table difficultyTable = new Table();
+        difficultyTable.setRound(false);
+        difficultyTable.setBackground(difficultySettingBackgroundImage.getDrawable());
+        difficultyTable.setSize(difficultySettingBackgroundImage.getWidth(), difficultySettingBackgroundImage.getHeight());
+
+        Table difficultySelectionTable = buildDifficultySelectionTable();
+        difficultyTable.add().width(difficultySettingBackgroundImage.getWidth() - difficultySelectionTable.getWidth() - 2.0f); // add empty cell for alignment
+        difficultyTable.add(difficultySelectionTable).size(difficultySelectionTable.getWidth(), difficultySelectionTable.getHeight());
+
+        return difficultyTable;
+    }
+
+    private Table buildDifficultySelectionTable() {
+        Table difficultySelectionTable = new Table();
+        difficultySelectionTable.setRound(false);
+
+        Stack difficultyImageStack = new Stack();
+        difficultyImageStack.add(easyImage);
+        difficultyImageStack.add(mediumImage);
+        difficultyImageStack.add(hardImage);
+
+        difficultyImageStack.setSize(easyImage.getWidth(), easyImage.getHeight());
+
+        // add buttons and image stack
+        difficultySelectionTable.add(previousDifficultyButton).size(previousDifficultyButton.getWidth(), previousDifficultyButton.getHeight());
+        difficultySelectionTable.add(difficultyImageStack).size(difficultyImageStack.getWidth(), difficultyImageStack.getHeight()).padLeft(0.5f).padRight(0.5f);
+        difficultySelectionTable.add(nextDifficultyButton).size(nextDifficultyButton.getWidth(), nextDifficultyButton.getHeight());
+        difficultySelectionTable.pack();
+
+        return difficultySelectionTable;
+    }
+
+    private Table buildBannerTable() {
+        Table bannerTable = new Table();
+        bannerTable.setRound(false);
+        bannerTable.add(backButton).size(backButton.getWidth(), backButton.getHeight());
+        bannerTable.add(settingsImage).size(settingsImage.getWidth(), settingsImage.getHeight());
+        bannerTable.add().size(backButton.getWidth(), backButton.getHeight()); // empty cell for alignment purposes
+        return bannerTable;
+    }
+
+    private Table buildAudioTable() {
+        Table audioTable = new Table();
+        audioTable.setRound(false);
+
+        // music table sub-table
+        Table musicTable = buildMusicTable();
+        audioTable.add(musicTable).size(musicTable.getWidth(), musicTable.getHeight());
+
+        // sounds table sub-table
+        Table soundsTable = buildSoundsTable();
+        audioTable.add(soundsTable).size(soundsTable.getWidth(), soundsTable.getHeight());
+
+        return audioTable;
+    }
+
+    private Table buildMusicTable() {
+        Table musicTable = new Table();
+        musicTable.setRound(false);
+        musicTable.setBackground(musicSettingBackgroundImage.getDrawable());
+        musicTable.setSize(musicSettingBackgroundImage.getWidth(), musicSettingBackgroundImage.getHeight());
+
+        musicTable.add().width(musicSettingBackgroundImage.getWidth() - musicToggleButton.getWidth() - 2.0f); // empty cell for alignment purposes
+        musicTable.add(musicToggleButton).size(musicToggleButton.getWidth(), musicToggleButton.getHeight());
+        return musicTable;
+    }
+
+    private Table buildSoundsTable() {
+        Table soundsTable = new Table();
+        soundsTable.setRound(false);
+        soundsTable.setBackground(soundSettingBackgroundImage.getDrawable());
+        soundsTable.setSize(soundSettingBackgroundImage.getWidth(), soundSettingBackgroundImage.getHeight());
+        soundsTable.add().width(soundSettingBackgroundImage.getWidth() - soundsToggleButton.getWidth() - 2.0f);
+        soundsTable.add(soundsToggleButton).size(soundsToggleButton.getWidth(), soundsToggleButton.getHeight());
+        return soundsTable;
     }
 
     @Override

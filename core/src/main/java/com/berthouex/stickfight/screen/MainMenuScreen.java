@@ -243,9 +243,18 @@ public class MainMenuScreen implements Screen {
         mainTable.setRound(false);
         stage.addActor(mainTable);
 
-        //////////////////////////////////////
+        Table leftSideTable = buildLeftSideTable();
+        Table rightSideTable = buildRightSideTable();
 
-        // left-side table with logo and fighter selection
+        mainTable.add(leftSideTable);
+        mainTable.add(rightSideTable).padLeft(2.0f);
+    }
+
+    /**
+     * left-side table with logo and fighter selection
+     * @return  a Table
+     */
+    private Table buildLeftSideTable() {
         Table leftSideTable = new Table();
         leftSideTable.setRound(false);
         leftSideTable.add(logoImage).size(logoImage.getWidth(), logoImage.getHeight());
@@ -277,9 +286,10 @@ public class MainMenuScreen implements Screen {
 
         // add fighter display to leftSideTable
         leftSideTable.add(fighterDisplayTable).size(fighterDisplayTable.getWidth(), fighterDisplayTable.getHeight());
+        return leftSideTable;
+    }
 
-        //////////////////////////////////////
-
+    private Table buildRightSideTable() {
         Table rightSideTable = new Table();
         rightSideTable.setRound(false);
         rightSideTable.add(playGameButton).size(playGameButton.getWidth(), playGameButton.getHeight());
@@ -288,11 +298,7 @@ public class MainMenuScreen implements Screen {
         rightSideTable.row().padTop(1.0f);
         rightSideTable.add(quitGameButton).size(quitGameButton.getWidth(), quitGameButton.getHeight());
         rightSideTable.row().padTop(1.0f);
-
-        //////////////////////////////////////
-
-        mainTable.add(leftSideTable);
-        mainTable.add(rightSideTable).padLeft(2.0f);
+        return rightSideTable;
     }
 
     // SCREEN
