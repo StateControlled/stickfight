@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.berthouex.stickfight.Main;
+import com.berthouex.stickfight.objects.BloodPool;
 import com.berthouex.stickfight.objects.BloodSplatter;
 import com.berthouex.stickfight.objects.Fighter;
 import com.berthouex.stickfight.resources.Assets;
@@ -77,6 +78,12 @@ public class GameScreen implements Screen, InputProcessor {
     private static final float RING_MIN_Y = 4.0f;
     private static final float RING_MAX_Y = 22.0f;
     private static final float RING_SLOPE = 3.16f;
+    // buttons
+    private Sprite playAgainButtonSprite;
+    private Sprite mainMenuButtonSprite;
+    private Sprite continueButtonSprite;
+    private Sprite pauseButtonSprite;
+    private static final float PAUSE_BUTTON_MARGIN = 1.5f;
 
     // fighters
     private static final float playerStartPositionX = 16.0f;        // values in world units, not pixels
@@ -85,12 +92,6 @@ public class GameScreen implements Screen, InputProcessor {
     private static final float fighterContactDistanceX = 7.5f;
     private static final float fighterContactDistanceY = 1.5f;
 
-    // buttons
-    private Sprite playAgainButtonSprite;
-    private Sprite mainMenuButtonSprite;
-    private Sprite continueButtonSprite;
-    private Sprite pauseButtonSprite;
-    private static final float PAUSE_BUTTON_MARGIN = 1.5f;
 
     // opponent AI
     private float opponentAiTimer;
@@ -106,6 +107,10 @@ public class GameScreen implements Screen, InputProcessor {
     private static final int BLOOD_SPLATTER_AMOUNT = 5;
     private static final float BLOOD_SPLATTER_OFFSET_X = 2.8f;
     private static final float BLOOD_SPLATTER_OFFSET_Y = 11f;
+
+    private BloodPool[] bloodPools;
+    private int currentBloodPoolIndex;
+    private static final int BLOOD_POOL_AMOUNT = 100;
 
     /**
      * Initializes a new GameScreen.
@@ -175,9 +180,10 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     /**
-     * Initialize the blood splatters.
+     * Initialize the blood splatters and blood pools.
      */
     private void createBlood() {
+        // init blood splatters
         playerBloodSplatters = new BloodSplatter[BLOOD_SPLATTER_AMOUNT];
         opponentBloodSplatters = new BloodSplatter[BLOOD_SPLATTER_AMOUNT];
 
@@ -188,6 +194,13 @@ public class GameScreen implements Screen, InputProcessor {
 
         currentPlayerBloodSplatterIndex = 0;
         currentOpponentBloodSplatterIndex = 0;
+
+        // init blood pools
+        bloodPools = new BloodPool[BLOOD_POOL_AMOUNT];
+        for (int i = 0; i < BLOOD_POOL_AMOUNT; i++) {
+            bloodPools[i] = new BloodPool(game);
+        }
+        currentBloodPoolIndex = 0;
     }
 
     @Override
@@ -292,6 +305,7 @@ public class GameScreen implements Screen, InputProcessor {
             backgroundTexture.getHeight() * GlobalVariables.WORLD_SCALE
         );
 
+        renderBloodPools();
         renderFighters();
         // draw front ropes
         game.batch.draw(
@@ -347,6 +361,14 @@ public class GameScreen implements Screen, InputProcessor {
         if (showingBlood) {
             for (BloodSplatter splatter : bloodSplatters) {
                 splatter.render(game.batch);
+            }
+        }
+    }
+
+    private void renderBloodPools() {
+        if (showingBlood) {
+            for (BloodPool pool : bloodPools) {
+                pool.render(game.batch);
             }
         }
     }
@@ -572,6 +594,10 @@ public class GameScreen implements Screen, InputProcessor {
             opponentBloodSplatters[i].update(deltaTime);
         }
 
+        for (BloodPool pool : bloodPools) {
+            pool.update(deltaTime);
+        }
+
         if (game.player.getPosition().x <= game.opponent.getPosition().x) {
             game.player.faceRight();
             game.opponent.faceLeft();
@@ -669,6 +695,14 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 currentOpponentBloodSplatterIndex = 0;
             }
+        }
+
+        // activate current blood pool in the array, then increment index
+        bloodPools[currentBloodPoolIndex].activate(fighter.getPosition().x, fighter.getPosition().y);
+        if (currentBloodPoolIndex < BLOOD_POOL_AMOUNT - 1) {
+            currentBloodPoolIndex++;
+        } else {
+            currentBloodPoolIndex = 0;
         }
     }
 
@@ -931,8 +965,11 @@ public class GameScreen implements Screen, InputProcessor {
             // M toggles music on or off
             game.audioManager.toggleMusic();
         } else if (keycode == Input.Keys.L) {
-          // change difficulty
-          difficulty = difficulty.nextDifficulty();
+            // change difficulty
+            difficulty = difficulty.nextDifficulty();
+        } else if (keycode == Input.Keys.K) {
+            // toggle blood
+            showingBlood = !showingBlood;
         } else {
             if (roundState == RoundState.IN_PROGRESS) {
                 // only if round is in progress check if player has pressed a movement key
