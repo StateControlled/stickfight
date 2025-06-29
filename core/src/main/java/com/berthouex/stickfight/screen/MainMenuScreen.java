@@ -8,7 +8,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -132,10 +131,10 @@ public class MainMenuScreen implements Screen {
             previousFighterButton.getWidth() * GlobalVariables.WORLD_SCALE,
             previousFighterButton.getHeight() * GlobalVariables.WORLD_SCALE
         );
-        // flip button on y-axis
-        previousFighterButton.setTransform(true);
-        previousFighterButton.setOrigin(previousFighterButton.getWidth() / 2f, previousFighterButton.getHeight() / 2f);
-        previousFighterButton.setScaleX(-1);
+
+        previousFighterButton.setTransform(true);   // flip button on y-axis
+        previousFighterButton.setOrigin(previousFighterButton.getWidth() / 2.0f, previousFighterButton.getHeight() / 2.0f);
+        previousFighterButton.setScaleX(-1);        // flip button on y-axis
 
         nextFighterButton = new Button(triangleButtonStyle);
         nextFighterButton.setSize(
@@ -160,6 +159,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.audioManager.playSound(Assets.CLICK_SOUND);
+                game.setScreen(game.settingsScreen);
             }
         });
 

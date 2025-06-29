@@ -17,6 +17,7 @@ import com.berthouex.stickfight.resources.AudioManager;
 import com.berthouex.stickfight.resources.SettingsManager;
 import com.berthouex.stickfight.screen.GameScreen;
 import com.berthouex.stickfight.screen.MainMenuScreen;
+import com.berthouex.stickfight.screen.SettingsScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -28,6 +29,7 @@ public class Main extends Game {
 
     public Screen gameScreen;
     public Screen mainMenuScreen;
+    public Screen settingsScreen;
 
     public final ArrayList<FighterChoice> fighterChoiceList = new ArrayList<>();
     public Fighter player;
@@ -70,6 +72,7 @@ public class Main extends Game {
         // screens
         gameScreen = new GameScreen(this);
         mainMenuScreen = new MainMenuScreen(this);
+        settingsScreen = new SettingsScreen(this);
 
         setScreen(mainMenuScreen);
     }
