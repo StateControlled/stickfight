@@ -1,11 +1,18 @@
 package com.berthouex.stickfight;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.berthouex.stickfight.objects.Fighter;
+import com.berthouex.stickfight.objects.FighterChoice;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.AudioManager;
 import com.berthouex.stickfight.screen.GameScreen;
@@ -21,6 +28,7 @@ public class Main extends Game {
     public Screen gameScreen;
     public Screen mainMenuScreen;
 
+    public final ArrayList<FighterChoice> fighterChoiceList = new ArrayList<>();
     public Fighter player;
     public Fighter opponent;
 
@@ -35,14 +43,27 @@ public class Main extends Game {
         audioManager = new AudioManager(assets.manager);
         audioManager.playMusic();
 
-        player = new Fighter(this, "Slim Stallone", new Color(1.0f, 0.2f, 0.2f, 1.0f));
-        opponent = new Fighter(this, "Thin Diesel", new Color(0.25f, 0.7f, 1.0f, 1.0f));
+        loadFighterChoiceList();
+
+        player = new Fighter(this, fighterChoiceList.get(0).getName(), fighterChoiceList.get(0).getColor());
+        opponent = new Fighter(this, fighterChoiceList.get(1).getName(), fighterChoiceList.get(1).getColor());
 
         // screens
         gameScreen = new GameScreen(this);
         mainMenuScreen = new MainMenuScreen(this);
 
         setScreen(mainMenuScreen);
+    }
+
+    /**
+     * Read json file
+     */
+    private void loadFighterChoiceList() {
+        Json json = new Json();
+        JsonValue fighterChoices = new JsonReader().parse(Gdx.files.internal("data/fighter_choices.json"));
+        for (int i = 0; i < fighterChoices.size; i++) {
+            fighterChoiceList.add(json.fromJson(FighterChoice.class, String.valueOf(fighterChoices.get(i))));
+        }
     }
 
     @Override

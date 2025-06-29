@@ -1,12 +1,14 @@
 package com.berthouex.stickfight.screen;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.berthouex.stickfight.Main;
+import com.berthouex.stickfight.objects.FighterChoice;
 import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.GlobalVariables;
 
@@ -148,6 +151,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.audioManager.playSound(Assets.CLICK_SOUND);
+                chooseRandomOpponent();
                 game.setScreen(game.gameScreen);
             }
         });
@@ -171,6 +175,18 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                if (currentFighterChoiceIndex > 0) {
+                    currentFighterChoiceIndex--;
+                } else {
+                    currentFighterChoiceIndex = game.fighterChoiceList.size() - 1;
+                }
+                // set name and color to chosen fighter
+                FighterChoice fighterChoice = game.fighterChoiceList.get(currentFighterChoiceIndex);
+                game.player.setName(fighterChoice.getName());
+                game.player.setColor(fighterChoice.getColor());
+                fighterDisplayImage.setColor(fighterChoice.getColor());
+                fighterDisplayNameLabel.setText(fighterChoice.getName().toUpperCase(Locale.getDefault()));
             }
         });
 
@@ -178,8 +194,31 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                if (currentFighterChoiceIndex < game.fighterChoiceList.size() - 1) {
+                    currentFighterChoiceIndex++;
+                } else {
+                    currentFighterChoiceIndex = 0;
+                }
+                // set name and color to chosen fighter
+                FighterChoice fighterChoice = game.fighterChoiceList.get(currentFighterChoiceIndex);
+                game.player.setName(fighterChoice.getName());
+                game.player.setColor(fighterChoice.getColor());
+                fighterDisplayImage.setColor(fighterChoice.getColor());
+                fighterDisplayNameLabel.setText(fighterChoice.getName().toUpperCase(Locale.getDefault()));
             }
         });
+    }
+
+    private void chooseRandomOpponent() {
+        Optional<FighterChoice> fighterChoiceOption = game.fighterChoiceList.stream().filter(fighterChoice1 -> !fighterChoice1.getName().equals(game.player.getName())).findFirst();
+        if (fighterChoiceOption.isPresent()) {
+            FighterChoice fighterChoice = fighterChoiceOption.get();
+            game.opponent.setName(fighterChoice.getName());
+            game.opponent.setColor(fighterChoice.getColor());
+        } else {
+            throw new RuntimeException("Unable to select opponent!");
+        }
     }
 
     private void createLabels() {
@@ -197,7 +236,7 @@ public class MainMenuScreen implements Screen {
     }
 
     private void createTables() {
-        stage.setDebugAll(true);
+//        stage.setDebugAll(true);
 
         // primary table layout
         Table mainTable = new Table();
@@ -265,6 +304,15 @@ public class MainMenuScreen implements Screen {
 
         fighterDisplayNameLabel.setText(game.player.getName().toUpperCase(Locale.getDefault()));
         fighterDisplayImage.setColor(game.player.getColor());
+
+        // find index of player selection
+        currentFighterChoiceIndex = 0;
+        for (int i = 0; i < game.fighterChoiceList.size(); i++) {
+            if (game.fighterChoiceList.get(i).getName().equalsIgnoreCase(game.player.getName())) {
+                currentFighterChoiceIndex = i;
+                break;
+            }
+        }
     }
 
     @Override
