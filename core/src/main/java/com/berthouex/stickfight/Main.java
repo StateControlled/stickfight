@@ -16,6 +16,7 @@ import com.berthouex.stickfight.resources.Assets;
 import com.berthouex.stickfight.resources.AudioManager;
 import com.berthouex.stickfight.resources.SettingsManager;
 import com.berthouex.stickfight.screen.GameScreen;
+import com.berthouex.stickfight.screen.LoadingScreen;
 import com.berthouex.stickfight.screen.MainMenuScreen;
 import com.berthouex.stickfight.screen.SettingsScreen;
 
@@ -30,6 +31,7 @@ public class Main extends Game {
     public Screen gameScreen;
     public Screen mainMenuScreen;
     public Screen settingsScreen;
+    public Screen loadingScreen;
 
     public final ArrayList<FighterChoice> fighterChoiceList = new ArrayList<>();
     public Fighter player;
@@ -37,15 +39,17 @@ public class Main extends Game {
 
     @Override
     public void create() {
-        settingsManager = new SettingsManager();
-        settingsManager.load();
-
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-
         assets = new Assets();
-        assets.load();
-        assets.manager.finishLoading();
+
+        loadingScreen = new LoadingScreen(this);
+        setScreen(loadingScreen);
+    }
+
+    public void assetsLoaded() {
+        settingsManager = new SettingsManager();
+        settingsManager.load();
         audioManager = new AudioManager(assets.manager);
 
         if (settingsManager.isMusicSettingOn()) {
