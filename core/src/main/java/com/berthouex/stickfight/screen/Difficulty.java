@@ -71,6 +71,12 @@ public enum Difficulty {
         };
     }
 
+    /**
+     * Returns the previous difficulty in the series in ascending order. After reaching the first in the series,
+     * returns the last difficulty option.
+     *
+     * @return  the previous difficulty
+     */
     public Difficulty previousDifficulty() {
         return switch(this) {
             case EASY -> HARD;
